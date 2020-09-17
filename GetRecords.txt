@@ -1,0 +1,36 @@
+Sub GetRecords() 'this routine is meant to look through all the questions to search for a particular MeSH term within the MeSH string and will copy those records to the 'sub records' worksheet
+Dim r As Integer 'to loop through rows
+Dim q As String ' to story the word used to query the MeSH field
+Dim MeSH As String ' to store the actual MeSH
+Dim ql As Integer 'to store the length of the query
+Dim ml As Integer 'to store the length of the MeSH term
+q = InputBox("Please enter the word or phrase you wish to use to extract particular questions, based on MeSH terms.")
+If q = "" Then
+MsgBox ("Please enter a search term and try again.")
+Exit Sub
+End If
+
+ql = Len(q) 'get the length of the query word
+
+r = 2 'initially set r to 2, the first row that might contain data.
+Extracted.Cells.ClearContents 'clear the existing content so only new data will show up
+
+While IsEmpty(DataIn.Cells(r, 10)) = False
+MeSH = DataIn.Cells(r, 71)
+ml = Len(MeSH) 'get the length of the mesh string
+If MeSH = "" Or ql > ml Then 'if the MeSH is blank, or the query length is longer than the MeSH term, don't do anything
+Else
+For a = 1 To ml  'starting at the beginning and going through until you've basically reached the end of the mesh terms based on the length of the query
+
+If UCase(Mid(MeSH, a, ql)) = UCase(q) Then 'if the queried word is found
+DataIn.Rows(r).Copy 'copy that row
+Extracted.Rows(EmptyRow(Extracted)).PasteSpecial  'paste the data on the 'Sub Records' sheet
+End If
+Next
+End If
+r = r + 1
+Wend
+Worksheets("Sub Records").Activate 'activate the sheet with the extracted records.
+
+End Sub
+
